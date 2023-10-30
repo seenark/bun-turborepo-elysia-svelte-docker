@@ -1,0 +1,15 @@
+version: "3.4"
+
+services:
+  minio:
+    image: minio/minio
+    platform: linux/amd64
+    environment:
+      MINIO_ROOT_USER: nosecure
+      MINIO_ROOT_PASSWORD: nosecure
+      MINIO_VOLUMES: /mnt/data # this path will be use in volume binding
+    volumes:
+      - ./minio/data:/mnt/data
+    ports:
+      - 9090:9090
+    command: minio server --console-address ":9090"

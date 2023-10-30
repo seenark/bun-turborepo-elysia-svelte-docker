@@ -1,0 +1,17 @@
+{
+  "name": "backend",
+  "version": "0.0.3",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "bun run --watch src/index.ts",
+    "build": "bun build.ts",
+    "start:ts": "bun src/index.ts"
+  },
+  "dependencies": {
+    "elysia-app": "workspace:*"
+  },
+  "devDependencies": {
+    "bun-types": "latest"
+  },
+  "module": "src/index.js"
+}

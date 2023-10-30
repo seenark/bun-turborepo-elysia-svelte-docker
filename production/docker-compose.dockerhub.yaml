@@ -1,0 +1,24 @@
+version: "3.4"
+
+services:
+  backend:
+    image: hadesgod/iipm-backend
+    platform: linux/amd64
+    env_file:
+      - .env.backend
+    environment:
+      NODE_ENV: production
+    ports:
+      - 3333:3333
+
+  web:
+    image: hadesgod/iipm-web
+    platform: linux/amd64
+    # env_file:
+    #   - .env.web
+    environment:
+      NODE_ENV: production
+      ENV SERVER_HOST: "127.0.0.1"
+      ENV SERVER_PORT: 3000
+    ports:
+      - 3000:3000

@@ -1,0 +1,4 @@
+npm i -g just-install
+IMAGE_NAME=backend
+DOCKERHUB_USERNAME=hadesgod
+IMAGE=${DOCKERHUB_USERNAME}/${IMAGE_NAME}

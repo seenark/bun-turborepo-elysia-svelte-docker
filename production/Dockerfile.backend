@@ -1,0 +1,22 @@
+FROM oven/bun as monorepo
+WORKDIR /app
+COPY . .
+RUN bun i
+
+FROM monorepo as builder 
+WORKDIR /app/apps/backend
+RUN bun run build
+
+FROM oven/bun as modules
+WORKDIR /app
+COPY . .
+RUN bun i -p --ignore-scripts
+
+# ? -------------------------
+FROM oven/bun:distroless as backend
+WORKDIR /app
+COPY --from=builder /app/apps/backend/dist ./apps/backend/dist
+COPY --from=modules /app/node_modules ./node_modules
+ENV NODE_ENV production
+EXPOSE 3333
+CMD ["./apps/backend/dist/index.js"]

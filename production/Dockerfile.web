@@ -1,0 +1,19 @@
+# FROM node:20-alpine as monorepo
+FROM oven/bun as monorepo
+WORKDIR /app
+# RUN bun i -g turbo
+COPY . .
+RUN bun i
+
+FROM monorepo as web-builder
+WORKDIR /app/apps/iipm-web
+RUN bun run build
+
+# ? -------------------------
+FROM joseluisq/static-web-server
+WORKDIR /app
+COPY --from=web-builder /app/apps/iipm-web/build /public
+ENV SERVER_ROOT /public
+ENV SERVER_PORT 3000
+ENV NODE_ENV production
+EXPOSE 3000
