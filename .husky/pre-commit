@@ -4,3 +4,4 @@
 # bun lint-staged
 bun format
 bun lint
+git add .
