@@ -1,70 +1,70 @@
 image: atlassian/default-image:4
 pipelines:
-  custom:
-    dockerprune:
-      - step:
-          name: docker prune
-          script:
-            - eval $(ssh-agent -s)
-            - echo $VM_IP
-            - mkdir -p ~/.ssh
-            - echo $(echo "$SSH_PRIVATE_KEY" | base64 -d) > ~/.ssh/ID_RSA
-            - echo "$(echo "$SSH_PRIVATE_KEY" | base64 -d)" | tr -d '\r' | ssh-add -
-            - touch ~/.ssh/config
-            - touch ~/.ssh/known_hosts
-            - chmod -R 400 ~/.ssh
-            - ssh -o StrictHostKeyChecking=no -i ~/.ssh/ID_RSA deployer@$VM_IP "bash -c ls -l && docker system prune -a -f"
-    staging:
-      - step:
-          name: Build and Test
-          script:
-            - npm i -g just-install
-            - IMAGE_NAME=${BACKEND_IMAGE_NAME}
-            - export VERSION=$(node -p "require('./apps/backend/package.json').version")
-            - IMAGE=${DOCKERHUB_USERNAME}/${IMAGE_NAME}
-            - just backend-build-prod ${IMAGE}
-            - docker save "${IMAGE_NAME}.tar"
-          services:
-            - docker
-          caches:
-            - docker
-          artifacts:
-            - "${BACKEND_IMAGE_NAME}.tar"
-      - step:
-          name: publish to dockerhub
-          script:
-            - echo ${DOCKERHUB_PASSWORD} | docker login --username "$DOCKERHUB_USERNAME" --password-stdin
-            - IMAGE_NAME=${BACKEND_IMAGE_NAME}
-            - docker load --input "${IMAGE_NAME}.tar"
-            - export VERSION=$(node -p "require('./apps/backend/package.json').version")
-            - IMAGE=${DOCKERHUB_USERNAME}/${IMAGE_NAME}
-            - docker tag "${IMAGE}" "${IMAGE}:${VERSION}"
-            - docker push "${IMAGE}:${VERSION}"
-          services:
-            - docker
-      - step:
-          name: Deploy to Google Compute engine
-          deployment: Staging
-          script:
-            - IMAGE_NAME=${BACKEND_IMAGE_NAME}
-            - export VERSION=$(node -p "require('./apps/backend/package.json').version")
-            - IMAGE=${DOCKERHUB_USERNAME}/${IMAGE_NAME}:${VERSION}
-            # setup this container that make it can communicate with VM via ssh
-            - eval $(ssh-agent -s)
-            # - apt-get update && apt-get install -y openssh-client
-            - echo $VM_IP
-            - mkdir -p ~/.ssh
-            - echo $(echo "$SSH_PRIVATE_KEY" | base64 -d) > ~/.ssh/ID_RSA
-            # - cat ~/.ssh/ID_RSA | tr -d '\r' | ssh-add -
-            - echo "$(echo "$SSH_PRIVATE_KEY" | base64 -d)" | tr -d '\r' | ssh-add -
-            - touch ~/.ssh/config
-            - touch ~/.ssh/known_hosts
-            - chmod -R 400 ~/.ssh
-            # copy docker-compose.dockerhub.yaml to VM
-            - scp -o BatchMode=yes -o StrictHostKeyChecking=no -i ~/.ssh/ID_RSA -r ./docker-compose.dockerhub.yaml deployer@$VM_IP:docker-compose.dockerhub.yaml
-            - ssh -o StrictHostKeyChecking=no -i ~/.ssh/ID_RSA deployer@$VM_IP "docker pull $IMAGE"
-            - ssh -o StrictHostKeyChecking=no -i ~/.ssh/ID_RSA deployer@$VM_IP "bash -c ls -l && API_IMAGE=$IMAGE docker compose -f docker-compose.dockerhub.yaml rm --stop --force --volumes backend"
-            - ssh -o StrictHostKeyChecking=no -i ~/.ssh/ID_RSA deployer@$VM_IP "bash -c ls -l && INFISICAL_TOKEN=$INFISICAL_TOKEN API_IMAGE=$IMAGE infisical --domain=$INFISICAL_URL --env=staging --path="/backend export > .env.backend"
-            - ssh -o StrictHostKeyChecking=no -i ~/.ssh/ID_RSA deployer@$VM_IP "bash -c ls -l && docker compose -f docker-compose.dockerhub.yaml up -d backend"
-          services:
-            - docker
+    custom:
+        dockerprune:
+            - step:
+                  name: docker prune
+                  script:
+                      - eval $(ssh-agent -s)
+                      - echo $VM_IP
+                      - mkdir -p ~/.ssh
+                      - echo $(echo "$SSH_PRIVATE_KEY" | base64 -d) > ~/.ssh/ID_RSA
+                      - echo "$(echo "$SSH_PRIVATE_KEY" | base64 -d)" | tr -d '\r' | ssh-add -
+                      - touch ~/.ssh/config
+                      - touch ~/.ssh/known_hosts
+                      - chmod -R 400 ~/.ssh
+                      - ssh -o StrictHostKeyChecking=no -i ~/.ssh/ID_RSA deployer@$VM_IP "bash -c ls -l && docker system prune -a -f"
+        staging:
+            - step:
+                  name: Build and Test
+                  script:
+                      - npm i -g just-install
+                      - IMAGE_NAME=${BACKEND_IMAGE_NAME}
+                      - export VERSION=$(node -p "require('./apps/backend/package.json').version")
+                      - IMAGE=${DOCKERHUB_USERNAME}/${IMAGE_NAME}
+                      - just backend-build-prod ${IMAGE}
+                      - docker save "${IMAGE_NAME}.tar"
+                  services:
+                      - docker
+                  caches:
+                      - docker
+                  artifacts:
+                      - "${BACKEND_IMAGE_NAME}.tar"
+            - step:
+                  name: publish to dockerhub
+                  script:
+                      - echo ${DOCKERHUB_PASSWORD} | docker login --username "$DOCKERHUB_USERNAME" --password-stdin
+                      - IMAGE_NAME=${BACKEND_IMAGE_NAME}
+                      - docker load --input "${IMAGE_NAME}.tar"
+                      - export VERSION=$(node -p "require('./apps/backend/package.json').version")
+                      - IMAGE=${DOCKERHUB_USERNAME}/${IMAGE_NAME}
+                      - docker tag "${IMAGE}" "${IMAGE}:${VERSION}"
+                      - docker push "${IMAGE}:${VERSION}"
+                  services:
+                      - docker
+            - step:
+                  name: Deploy to Google Compute engine
+                  deployment: Staging
+                  script:
+                      - IMAGE_NAME=${BACKEND_IMAGE_NAME}
+                      - export VERSION=$(node -p "require('./apps/backend/package.json').version")
+                      - IMAGE=${DOCKERHUB_USERNAME}/${IMAGE_NAME}:${VERSION}
+                      # setup this container that make it can communicate with VM via ssh
+                      - eval $(ssh-agent -s)
+                      # - apt-get update && apt-get install -y openssh-client
+                      - echo $VM_IP
+                      - mkdir -p ~/.ssh
+                      - echo $(echo "$SSH_PRIVATE_KEY" | base64 -d) > ~/.ssh/ID_RSA
+                      # - cat ~/.ssh/ID_RSA | tr -d '\r' | ssh-add -
+                      - echo "$(echo "$SSH_PRIVATE_KEY" | base64 -d)" | tr -d '\r' | ssh-add -
+                      - touch ~/.ssh/config
+                      - touch ~/.ssh/known_hosts
+                      - chmod -R 400 ~/.ssh
+                      # copy docker-compose.dockerhub.yaml to VM
+                      - scp -o BatchMode=yes -o StrictHostKeyChecking=no -i ~/.ssh/ID_RSA -r ./docker-compose.dockerhub.yaml deployer@$VM_IP:docker-compose.dockerhub.yaml
+                      - ssh -o StrictHostKeyChecking=no -i ~/.ssh/ID_RSA deployer@$VM_IP "docker pull $IMAGE"
+                      - ssh -o StrictHostKeyChecking=no -i ~/.ssh/ID_RSA deployer@$VM_IP "bash -c ls -l && API_IMAGE=$IMAGE docker compose -f docker-compose.dockerhub.yaml rm --stop --force --volumes backend"
+                      - ssh -o StrictHostKeyChecking=no -i ~/.ssh/ID_RSA deployer@$VM_IP "bash -c ls -l && INFISICAL_TOKEN=$INFISICAL_TOKEN API_IMAGE=$IMAGE infisical --domain=$INFISICAL_URL --env=staging --path="/backend export > .env.backend"
+                      - ssh -o StrictHostKeyChecking=no -i ~/.ssh/ID_RSA deployer@$VM_IP "bash -c ls -l && docker compose -f docker-compose.dockerhub.yaml up -d backend"
+                  services:
+                      - docker

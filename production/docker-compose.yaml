@@ -1,26 +1,26 @@
 version: "3.4"
 
 services:
-  backend:
-    image: backend
-    build:
-      context: ../
-      dockerfile: ./production/Dockerfile.backend
-    platform: linux/amd64
-    environment:
-      NODE_ENV: production
-    ports:
-      - 3333:3333
+    backend:
+        image: backend
+        build:
+            context: ../
+            dockerfile: ./production/Dockerfile.backend
+        platform: linux/amd64
+        environment:
+            NODE_ENV: production
+        ports:
+            - 3333:3333
 
-  web:
-    image: web
-    build:
-      context: ..
-      dockerfile: ./production/Dockerfile.web
-    platform: linux/amd64
-    environment:
-      NODE_ENV: production
-      ENV SERVER_HOST: "127.0.0.1"
-      ENV SERVER_PORT: 3000
-    ports:
-      - 3000:3000
+    web:
+        image: web
+        build:
+            context: ..
+            dockerfile: ./production/Dockerfile.web
+        platform: linux/amd64
+        environment:
+            NODE_ENV: production
+            ENV SERVER_HOST: "127.0.0.1"
+            ENV SERVER_PORT: 3000
+        ports:
+            - 3000:3000

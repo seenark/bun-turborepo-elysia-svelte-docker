@@ -1,43 +1,43 @@
 {
-  "private": true,
-  "scripts": {
-    "build": "turbo run build",
-    "dev": "turbo run dev",
-    "lint": "turbo run lint",
-    "format": "prettier --write .",
-    "dev:api": "turbo run dev --filter=backend",
-    "dev:web": "turbo run dev --filter=iipm-web",
-    "dev:admin": "turbo run dev --filter=admin",
-    "build:backend": "turbo run build --filter=backend",
-    "build:web": "turbo run build --filter=iipm-web",
-    "build:admin": "turbo run build --filter=admin",
-    "start:ts:backend": "turbo run start:ts --filter=backend",
-    "prepare": "husky install",
-    "commit": "cz"
-  },
-  "devDependencies": {
-    "commitizen": "^4.3.0",
-    "cz-customizable": "^7.0.0",
-    "eslint": "^8.0.0",
-    "eslint-config-custom": "workspace:*",
-    "gitmoji-cli": "^8.5.0",
-    "husky": "^8.0.0",
-    "lint-staged": "^15.0.2",
-    "prettier": "^2.7.1",
-    "prettier-plugin-svelte": "^2.7.0",
-    "turbo": "latest"
-  },
-  "packageManager": "bun@1.0.7",
-  "workspaces": [
-    "apps/*",
-    "packages/*"
-  ],
-  "config": {
-    "commitizen": {
-      "path": "node_modules/cz-customizable"
+    "private": true,
+    "scripts": {
+        "build": "turbo run build",
+        "dev": "turbo run dev",
+        "lint": "turbo run lint",
+        "format": "prettier --write .",
+        "dev:api": "turbo run dev --filter=backend",
+        "dev:web": "turbo run dev --filter=iipm-web",
+        "dev:admin": "turbo run dev --filter=admin",
+        "build:backend": "turbo run build --filter=backend",
+        "build:web": "turbo run build --filter=iipm-web",
+        "build:admin": "turbo run build --filter=admin",
+        "start:ts:backend": "turbo run start:ts --filter=backend",
+        "prepare": "husky install",
+        "commit": "cz"
     },
-    "cz-customizable": {
-      "config": "./.cz-config.cjs"
+    "devDependencies": {
+        "commitizen": "^4.3.0",
+        "cz-customizable": "^7.0.0",
+        "eslint": "^8.0.0",
+        "eslint-config-custom": "workspace:*",
+        "gitmoji-cli": "^8.5.0",
+        "husky": "^8.0.0",
+        "lint-staged": "^15.0.2",
+        "prettier": "^2.7.1",
+        "prettier-plugin-svelte": "^2.7.0",
+        "turbo": "latest"
+    },
+    "packageManager": "bun@1.0.7",
+    "workspaces": [
+        "apps/*",
+        "packages/*"
+    ],
+    "config": {
+        "commitizen": {
+            "path": "node_modules/cz-customizable"
+        },
+        "cz-customizable": {
+            "config": "./.cz-config.cjs"
+        }
     }
-  }
 }
