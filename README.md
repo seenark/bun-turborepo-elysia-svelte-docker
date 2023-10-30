@@ -23,4 +23,11 @@ All apps run with bun
 
 ### Utilities
 
--   installed gitmoji as well `bun commit` to pop cz in terminal
+-   installed gitmoji as well run `bun commit` to pop cz in terminal
+
+### dockerfile
+
+there are dockerfiles in production folder
+
+-   `iipm-web`: Dockerfile.web
+-   `backend`: Dockerfile.backend
